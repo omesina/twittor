@@ -25,21 +25,6 @@ const APP_SHELL_INMUTABLE = [
     'css/animate.css'
 ];
 
-function ClearCache( name, length ) {
-    caches.open( name )
-        .then( cache => {
-
-            return cache.keys()
-                .then( keys => {
-                    
-                    if ( keys.length > length ) {
-                        cache.delete( keys[0] )
-                            .then( ClearCache(name, length) );
-                    }
-                });
-        });
-}
-
 self.addEventListener('install', e => {
     const cacheStatic = caches.open(STATIC_CACHE).then(cache => {
         cache.addAll(APP_SHELL);
@@ -56,6 +41,11 @@ self.addEventListener('activate', e => {
     const clearCache = caches.keys().then(keys => {
         keys.forEach(key =>{
             if(key != STATIC_CACHE && key.includes('static'))
+            {
+                return caches.delete(key);
+            }
+
+            if(key != DYNAMIC_CACHE && key.includes('dynamic'))
             {
                 return caches.delete(key);
             }
